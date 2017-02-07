@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Protocol Documentation</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic"/>
+    <style>
+      body {
+        width: 60em;
+        margin: 1em auto;
+        color: #222;
+        font-family: "Ubuntu", sans-serif;
+        padding-bottom: 4em;
+      }
+
+      h1 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      h2 {
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+        margin: 1.5em 0;
+      }
+
+      h3 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      a {
+        text-decoration: none;
+        color: #567e25;
+      }
+
+      table {
+        width: 100%;
+        font-size: 80%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        font-weight: 700;
+        background-color: #dcdcdc;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #fbfbfb;
+      }
+
+      td {
+        border: 1px solid #ccc;
+        padding: 0.5ex 2ex;
+      }
+
+      td p {
+        text-indent: 1em;
+        margin: 0;
+      }
+
+      td p:nth-child(1) {
+        text-indent: 0; /* No indent on first p in td */
+      }
+
+      /* Table of fields */
+      .field-table td:nth-child(1) { /* Field */
+        width: 10em;
+      }
+      .field-table td:nth-child(2) { /* Type */
+        width: 10em;
+      }
+      .field-table td:nth-child(3) { /* Label */
+        width: 6em;
+      }
+      .field-table td:nth-child(4) { /* Description */
+        width: auto;
+      }
+
+      /* Table of extensions */
+      .extension-table td:nth-child(1) { /* Extension */
+        width: 10em;
+      }
+      .extension-table td:nth-child(2) { /* Type */
+        width: 10em;
+      }
+      .extension-table td:nth-child(3) { /* Base */
+        width: 10em;
+      }
+      .extension-table td:nth-child(4) { /* Number */
+        width: 5em;
+      }
+      .extension-table td:nth-child(5) { /* Description */
+        width: auto;
+      }
+
+      /* Table of enum values. */
+      .enum-table td:nth-child(1) { /* Name */
+        width: 10em;
+      }
+      .enum-table td:nth-child(2) { /* Number */
+        width: 10em;
+      }
+      .enum-table td:nth-child(3) { /* Description */
+        width: auto;
+      }
+
+      /* Table of scalar value types. */
+      .scalar-value-types-table tr {
+        height: 3em;
+      }
+
+      /* Table of contents. */
+      #toc-container ul {
+        list-style-type: none;
+        padding-left: 1em;
+        line-height: 180%;
+        margin: 0;
+      }
+      #toc > li > a {
+        font-weight: bold;
+      }
+
+      /* File heading div */
+      .file-heading {
+        width: 100%;
+        display: table;
+        border-bottom: 1px solid #aaa;
+        margin: 4em 0 1.5em 0;
+      }
+      .file-heading h2 {
+        border: none;
+        display: table-cell;
+      }
+      .file-heading a {
+        text-align: right;
+        display: table-cell;
+      }
+
+      /* The 'M', 'E' and 'X' badges in the ToC */
+      .badge {
+        width: 1.6em;
+        height: 1.6em;
+        display: inline-block;
+
+        line-height: 1.6em;
+        text-align: center;
+        font-weight: bold;
+        font-size: 60%;
+
+        color: #89ba48;
+        background-color: #dff0c8;
+
+        margin: 0.5ex 1em 0.5ex -1em;
+        border: 1px solid #fbfbfb;
+        border-radius: 1ex;
+      }
+    </style>
+
+    <!-- User custom CSS -->
+    <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+  </head>
+
+  <body>
+
+    <h1 id="title">Protocol Documentation</h1>
+
+    <h2>Table of Contents</h2>
+
+    <div id="toc-container">
+      <ul id="toc">
+        <li>
+          <a href="#collaboration.proto">collaboration.proto</a>
+          <ul>
+            <li>
+              <a href="#Collaborate">
+                <span class="badge">M</span>
+                Collaborate
+              </a>
+            </li>
+            <li>
+              <a href="#Demand">
+                <span class="badge">M</span>
+                Demand
+              </a>
+            </li>
+            <li>
+              <a href="#GainPattern">
+                <span class="badge">M</span>
+                GainPattern
+              </a>
+            </li>
+            <li>
+              <a href="#Hello">
+                <span class="badge">M</span>
+                Hello
+              </a>
+            </li>
+            <li>
+              <a href="#Hello.Dialect">
+                <span class="badge">M</span>
+                Hello.Dialect
+              </a>
+            </li>
+            <li>
+              <a href="#InvalidateMyDeclaration">
+                <span class="badge">M</span>
+                InvalidateMyDeclaration
+              </a>
+            </li>
+            <li>
+              <a href="#Location">
+                <span class="badge">M</span>
+                Location
+              </a>
+            </li>
+            <li>
+              <a href="#MakeDeclaration">
+                <span class="badge">M</span>
+                MakeDeclaration
+              </a>
+            </li>
+            <li>
+              <a href="#Node_Locations">
+                <span class="badge">M</span>
+                Node_Locations
+              </a>
+            </li>
+            <li>
+              <a href="#Node_Locations.NodeLocationsEntry">
+                <span class="badge">M</span>
+                Node_Locations.NodeLocationsEntry
+              </a>
+            </li>
+            <li>
+              <a href="#Observation">
+                <span class="badge">M</span>
+                Observation
+              </a>
+            </li>
+            <li>
+              <a href="#PSD">
+                <span class="badge">M</span>
+                PSD
+              </a>
+            </li>
+            <li>
+              <a href="#Performance">
+                <span class="badge">M</span>
+                Performance
+              </a>
+            </li>
+            <li>
+              <a href="#RequestYourDemand">
+                <span class="badge">M</span>
+                RequestYourDemand
+              </a>
+            </li>
+            <li>
+              <a href="#RequestYourObservation">
+                <span class="badge">M</span>
+                RequestYourObservation
+              </a>
+            </li>
+            <li>
+              <a href="#RequestYourPerformance">
+                <span class="badge">M</span>
+                RequestYourPerformance
+              </a>
+            </li>
+            <li>
+              <a href="#RequestYourResourceUse">
+                <span class="badge">M</span>
+                RequestYourResourceUse
+              </a>
+            </li>
+            <li>
+              <a href="#Resource">
+                <span class="badge">M</span>
+                Resource
+              </a>
+            </li>
+            <li>
+              <a href="#Spectrogram">
+                <span class="badge">M</span>
+                Spectrogram
+              </a>
+            </li>
+            <li>
+              <a href="#SpectrumVoxel">
+                <span class="badge">M</span>
+                SpectrumVoxel
+              </a>
+            </li>
+            <li>
+              <a href="#TimeStamp">
+                <span class="badge">M</span>
+                TimeStamp
+              </a>
+            </li>
+            <li>
+              <a href="#Collaborate.CollaborationType">
+                <span class="badge">E</span>
+                Collaborate.CollaborationType
+              </a>
+            </li>
+            <li>
+              <a href="#Demand.Type">
+                <span class="badge">E</span>
+                Demand.Type
+              </a>
+            </li>
+            <li>
+              <a href="#MakeDeclaration.DeclarationType">
+                <span class="badge">E</span>
+                MakeDeclaration.DeclarationType
+              </a>
+            </li>
+            <li>
+              <a href="#Observation.Type">
+                <span class="badge">E</span>
+                Observation.Type
+              </a>
+            </li>
+            <li>
+              <a href="#Performance.Type">
+                <span class="badge">E</span>
+                Performance.Type
+              </a>
+            </li>
+            <li>
+              <a href="#Resource.Type">
+                <span class="badge">E</span>
+                Resource.Type
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#scalar-value-types">Scalar Value Types</a></li>
+      </ul>
+    </div>
+
+    <div class="file-heading">
+      <h2 id="collaboration.proto">collaboration.proto</h2><a href="#title">Top</a>
+    </div>
+    
+    <h3 id="Collaborate">Collaborate</h3>
+    <p>The Collaborate message is a simple wrapper that allows users to determine the type of message
+they just received. Every message to be sent to another network must be encapsulated in a 
+Collaborate message</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>hello</td>
+          <td><a href="#Hello">Hello</a></td>
+          <td>optional</td>
+          <td><p>See Hello documentation</p></td>
+        </tr>
+        <tr>
+          <td>invalidate_my_declaration</td>
+          <td><a href="#InvalidateMyDeclaration">InvalidateMyDeclaration</a></td>
+          <td>optional</td>
+          <td><p>See InvalidateMyDeclaration documentation</p></td>
+        </tr>
+        <tr>
+          <td>make_declaration</td>
+          <td><a href="#MakeDeclaration">MakeDeclaration</a></td>
+          <td>optional</td>
+          <td><p>See MakeDeclaration documentation</p></td>
+        </tr>
+        <tr>
+          <td>request_your_demand</td>
+          <td><a href="#RequestYourDemand">RequestYourDemand</a></td>
+          <td>optional</td>
+          <td><p>See RequestYourDemand documentation</p></td>
+        </tr>
+        <tr>
+          <td>request_your_resource_use</td>
+          <td><a href="#RequestYourResourceUse">RequestYourResourceUse</a></td>
+          <td>optional</td>
+          <td><p>See RequestYourResourceUse documentation</p></td>
+        </tr>
+        <tr>
+          <td>request_your_performance</td>
+          <td><a href="#RequestYourPerformance">RequestYourPerformance</a></td>
+          <td>optional</td>
+          <td><p>See RequestYourPerformance documentation</p></td>
+        </tr>
+        <tr>
+          <td>request_your_observation</td>
+          <td><a href="#RequestYourObservation">RequestYourObservation</a></td>
+          <td>optional</td>
+          <td><p>See RequestYourObservation documentation</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Demand">Demand</h3>
+    <p>A Demand object is meant to encapsulate something that is driving the network. 
+If a network has no demands, it technically has no need to transmit. A Demand might be
+a requirement on certain amount of throughput for the traffic the network must service, 
+or a maximum tolerable latency. Demand objects optionally include the concept of a 
+source and destination node such that Demands could be tied to a flow between specific nodes
+in a network.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>source_node</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>source node for the traffic associated with the demand</p></td>
+        </tr>
+        <tr>
+          <td>destination_node</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>destination node for the traffic associated with the demand</p></td>
+        </tr>
+        <tr>
+          <td>throughput</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p>throughput is defined as bits per second</p></td>
+        </tr>
+        <tr>
+          <td>latency</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p>latency is defined in seconds</p></td>
+        </tr>
+        <tr>
+          <td>priority</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p>priority is initially arbitrarily defined between 0 and 1</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="GainPattern">GainPattern</h3>
+    <p>A GainPattern is a sequence of power values in dB versus azimuth angle. This could represent
+an antenna pattern or the beam pattern resulting from steering a null</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>gain_pattern_db</td>
+          <td><a href="#double">double</a></td>
+          <td>repeated</td>
+          <td><p>Gain at a sequence of points, in dB. To be determined if this is most useful as 
+defined relative to peak gain (max will always be 0dB) or relative
+to an isotropic radiator (dBi)</p></td>
+        </tr>
+        <tr>
+          <td>start_azimuth_deg</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p>Azimuth of the first point in the gain sequence, in degrees. 0 == North</p></td>
+        </tr>
+        <tr>
+          <td>step_azimuth_deg</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p>Difference in azimuth between two adjacent gain values in the gain list, in degrees.</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Hello">Hello</h3>
+    <p>A Hello message is an initial peer-to-peer handshake that all networks must support</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>my_dialect</td>
+          <td><a href="#Hello.Dialect">Hello.Dialect</a></td>
+          <td>optional</td>
+          <td><p>define the messages that this network supports</p></td>
+        </tr>
+        <tr>
+          <td>my_network_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>include the network ID of the network that generated this message</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Hello.Dialect">Hello.Dialect</h3>
+    <p>A dialect is used to declare what messages a network can understand or generate</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>supported_collaboration_list</td>
+          <td><a href="#int32">int32</a></td>
+          <td>repeated</td>
+          <td><p>list of supported top level messages</p></td>
+        </tr>
+        <tr>
+          <td>supported_resource_list</td>
+          <td><a href="#int32">int32</a></td>
+          <td>repeated</td>
+          <td><p>list of supported Resource types</p></td>
+        </tr>
+        <tr>
+          <td>supported_performance_list</td>
+          <td><a href="#int32">int32</a></td>
+          <td>repeated</td>
+          <td><p>list of supported Performance types</p></td>
+        </tr>
+        <tr>
+          <td>supported_demand_list</td>
+          <td><a href="#int32">int32</a></td>
+          <td>repeated</td>
+          <td><p>list of supported Demand types</p></td>
+        </tr>
+        <tr>
+          <td>supported_observation_list</td>
+          <td><a href="#int32">int32</a></td>
+          <td>repeated</td>
+          <td><p>list of supported Observation types</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="InvalidateMyDeclaration">InvalidateMyDeclaration</h3>
+    <p>Use this to cancel a previous declaration before it is due to expire.
+No, you cannot issue an InvalidateMyDeclaration on an InvalidateMyDeclaration message.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>invalid_statement_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>ID of the statement to be cancelled. 
+There is no support for a network to invalidate the statement
+of a different network.</p></td>
+        </tr>
+        <tr>
+          <td>my_network_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>My Network ID.</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Location">Location</h3>
+    <p>Location in terms of latitude, longitude, and elevation
+The intent is to make this close to what will be provided directly to SRNs</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>latitude</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p>latitude in decimal degrees</p></td>
+        </tr>
+        <tr>
+          <td>longitude</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p>longitude in decimal degrees</p></td>
+        </tr>
+        <tr>
+          <td>elevation</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p>meters above sea level</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="MakeDeclaration">MakeDeclaration</h3>
+    <p>Use this message to declare something to other networks.
+Note that making a declaration with a mix of Demand, Resource, Performance, or 
+Observation objects implies there is a relationship between them. 
+For example, declaring a Demand along with a Resource would imply 
+the intent to use the specified Resource to service the specified Demand.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>statement_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>included to allow networks to invalidate their own previous statements.
+Statement IDs must be unique within a single network.</p></td>
+        </tr>
+        <tr>
+          <td>my_network_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>My Network ID.</p></td>
+        </tr>
+        <tr>
+          <td>start_time</td>
+          <td><a href="#TimeStamp">TimeStamp</a></td>
+          <td>optional</td>
+          <td><p>the time at which this statement is valid. Times in the past imply
+a relaying of historical or measured information.
+Times in the future imply an intent or a plan.
+A start time of zero implies &quot;Now&quot;</p></td>
+        </tr>
+        <tr>
+          <td>duration_ps</td>
+          <td><a href="#int64">int64</a></td>
+          <td>optional</td>
+          <td><p>A duration of zero implies the statement applies to an instant in time.
+A duration of the max value of an int64 implies infinity.</p></td>
+        </tr>
+        <tr>
+          <td>demand</td>
+          <td><a href="#Demand">Demand</a></td>
+          <td>repeated</td>
+          <td><p>mixing different classes implies that there is a relationship between the 
+union of everything in the Declaration
+See the Demand data type documentation</p></td>
+        </tr>
+        <tr>
+          <td>resource</td>
+          <td><a href="#Resource">Resource</a></td>
+          <td>repeated</td>
+          <td><p>See the Resource data type documentation</p></td>
+        </tr>
+        <tr>
+          <td>performance</td>
+          <td><a href="#Performance">Performance</a></td>
+          <td>repeated</td>
+          <td><p>See the Performance data type documentation</p></td>
+        </tr>
+        <tr>
+          <td>observation</td>
+          <td><a href="#Observation">Observation</a></td>
+          <td>repeated</td>
+          <td><p>See the Observation data type documentation</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Node_Locations">Node_Locations</h3>
+    <p>Mapping of node ID to location for some number of nodes in a network</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>node_locations</td>
+          <td><a href="#Node_Locations.NodeLocationsEntry">Node_Locations.NodeLocationsEntry</a></td>
+          <td>repeated</td>
+          <td><p>maps node ID to a location</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Node_Locations.NodeLocationsEntry">Node_Locations.NodeLocationsEntry</h3>
+    <p></p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>key</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>value</td>
+          <td><a href="#Location">Location</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Observation">Observation</h3>
+    <p>An Observation is something that can be directly viewed by a node or network. This may be
+something like the current position information a node is seeing, or the power spectral density
+a node saw at a specific point over a particular time range. Observations are optionally tied
+to a location or a specific node in a network.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>location</td>
+          <td><a href="#Location">Location</a></td>
+          <td>optional</td>
+          <td><p>optional field used to specify the location of the observation</p></td>
+        </tr>
+        <tr>
+          <td>node_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>optional field used to specify the node id of the observer</p></td>
+        </tr>
+        <tr>
+          <td>psd</td>
+          <td><a href="#PSD">PSD</a></td>
+          <td>optional</td>
+          <td><p>See the PSD documentation</p></td>
+        </tr>
+        <tr>
+          <td>spectrogram</td>
+          <td><a href="#Spectrogram">Spectrogram</a></td>
+          <td>optional</td>
+          <td><p>See the Spectrogram documentation</p></td>
+        </tr>
+        <tr>
+          <td>node_locations</td>
+          <td><a href="#Node_Locations">Node_Locations</a></td>
+          <td>optional</td>
+          <td><p>See the Node_Locations documentation</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="PSD">PSD</h3>
+    <p>a Power Spectral Density defines a trace of power vs frequency.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>power_density_dbm_hz</td>
+          <td><a href="#double">double</a></td>
+          <td>repeated</td>
+          <td><p>express the observed power spectral density as a sequence of
+power values in dBm/Hz, with the first value in the power_density 
+sequence corresponding to start_hz</p></td>
+        </tr>
+        <tr>
+          <td>start_hz</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p>frequency in Hz associated with the first value in the power_density_dbm_hz sequence</p></td>
+        </tr>
+        <tr>
+          <td>step_hz</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p>difference in frequency in Hz between each value in the power_density_dbm_hz sequence</p></td>
+        </tr>
+        <tr>
+          <td>duration_ps</td>
+          <td><a href="#int64">int64</a></td>
+          <td>optional</td>
+          <td><p>the duration in picoseconds over which this PSD was calculated</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Performance">Performance</h3>
+    <p>A Performance object is meant to encapsulate some sort of metric important to the network. 
+Performance objects optionally include the concept of source and destination nodes in order
+to tie Performance metrics to flows between specific nodes in a network, if appropriate.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>source_node</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>source node for the traffic associated with the performance</p></td>
+        </tr>
+        <tr>
+          <td>destination_node</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>destination node for the traffic associated with the performance</p></td>
+        </tr>
+        <tr>
+          <td>scalar_performance</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p>scalar_performance is defined as a real number from 0 to 1. 
+O means things can't get worse,
+1 means everything is great</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="RequestYourDemand">RequestYourDemand</h3>
+    <p>Use this message to request another network's demand. 
+You request this in terms of the specific data structure you are interested in,
+along with the starting time and duration of your time period of interest. You may also
+specify a source and/or destination node if you are interested in a specific flow</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>demand_types</td>
+          <td><a href="#int32">int32</a></td>
+          <td>repeated</td>
+          <td><p>Which specific demand metric are you interested in?</p></td>
+        </tr>
+        <tr>
+          <td>start_time</td>
+          <td><a href="#TimeStamp">TimeStamp</a></td>
+          <td>optional</td>
+          <td><p>What time period are you interested in? Past, present, future?</p></td>
+        </tr>
+        <tr>
+          <td>duration_ps</td>
+          <td><a href="#int64">int64</a></td>
+          <td>optional</td>
+          <td><p>How much time are you interested in, ie what is the integration time?</p></td>
+        </tr>
+        <tr>
+          <td>my_network_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>Who am I?</p></td>
+        </tr>
+        <tr>
+          <td>source_node</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>source node for the traffic associated with the demand</p></td>
+        </tr>
+        <tr>
+          <td>destination_node</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>destination node for the traffic associated with the demand</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="RequestYourObservation">RequestYourObservation</h3>
+    <p>Use this message to request another network to make an observation for you.
+You request this in terms of the specific data structure you are interested in,
+along with the starting time and duration of your time period of interest. You can
+also specify either the location or node_id for where you wish this observation to be made.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>observation_types</td>
+          <td><a href="#int32">int32</a></td>
+          <td>repeated</td>
+          <td><p>Which specific observation are you interested in?</p></td>
+        </tr>
+        <tr>
+          <td>start_time</td>
+          <td><a href="#TimeStamp">TimeStamp</a></td>
+          <td>optional</td>
+          <td><p>What time period are you interested in? Past, present, future?</p></td>
+        </tr>
+        <tr>
+          <td>duration_ps</td>
+          <td><a href="#int64">int64</a></td>
+          <td>optional</td>
+          <td><p>How much time are you interested in, ie what is the integration time?</p></td>
+        </tr>
+        <tr>
+          <td>my_network_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>Who am I?</p></td>
+        </tr>
+        <tr>
+          <td>location</td>
+          <td><a href="#Location">Location</a></td>
+          <td>optional</td>
+          <td><p>optional field used to specify the location of the observation</p></td>
+        </tr>
+        <tr>
+          <td>node_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>optional field used to specify the node id of the observer</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="RequestYourPerformance">RequestYourPerformance</h3>
+    <p>Use this message to request another network's Performance.
+You request this in terms of the specific data structure you are interested in,
+along with the starting time and duration of your time period of interest. You may also
+specify a source and/or destination node if you are interested in a specific flow</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>performance_types</td>
+          <td><a href="#int32">int32</a></td>
+          <td>repeated</td>
+          <td><p>Which specific performance metric are you interested in?</p></td>
+        </tr>
+        <tr>
+          <td>start_time</td>
+          <td><a href="#TimeStamp">TimeStamp</a></td>
+          <td>optional</td>
+          <td><p>What time period are you interested in? Past, present, future?</p></td>
+        </tr>
+        <tr>
+          <td>duration_ps</td>
+          <td><a href="#int64">int64</a></td>
+          <td>optional</td>
+          <td><p>How much time are you interested in, ie what is the integration time?</p></td>
+        </tr>
+        <tr>
+          <td>my_network_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>Who am I?</p></td>
+        </tr>
+        <tr>
+          <td>source_node</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>source node for the traffic associated with the demand</p></td>
+        </tr>
+        <tr>
+          <td>destination_node</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>destination node for the traffic associated with the demand</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="RequestYourResourceUse">RequestYourResourceUse</h3>
+    <p>Use this message to request another network's Resource Use.
+You request this in terms of the specific data structure you are interested in,
+along with the starting time and duration of your time period of interest.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>resource_types</td>
+          <td><a href="#int32">int32</a></td>
+          <td>repeated</td>
+          <td><p>Which specific resource are you interested in?</p></td>
+        </tr>
+        <tr>
+          <td>start_time</td>
+          <td><a href="#TimeStamp">TimeStamp</a></td>
+          <td>optional</td>
+          <td><p>What time period are you interested in? Past, present, future?</p></td>
+        </tr>
+        <tr>
+          <td>duration_ps</td>
+          <td><a href="#int64">int64</a></td>
+          <td>optional</td>
+          <td><p>How much time are you interested in, ie what is the integration time?</p></td>
+        </tr>
+        <tr>
+          <td>my_network_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>Who am I?</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Resource">Resource</h3>
+    <p>A Resource is something that a radio network might use. 
+For example, a radio network can make use of the spectrum of the spectrum in a given 
+time/frequency/power voxel, or it can chose to steer a null in a given direction</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>is_periodic</td>
+          <td><a href="#bool">bool</a></td>
+          <td>optional</td>
+          <td><p>tells whether or not this resource specification should be considered to be periodic</p></td>
+        </tr>
+        <tr>
+          <td>period_ps</td>
+          <td><a href="#int64">int64</a></td>
+          <td>optional</td>
+          <td><p>period_ps is in picoseconds.
+If the resource is declared to be periodic, this defines the repetition period.
+This parameter has no meaning if is_periodic is false.</p></td>
+        </tr>
+        <tr>
+          <td>spectrum_voxel</td>
+          <td><a href="#SpectrumVoxel">SpectrumVoxel</a></td>
+          <td>optional</td>
+          <td><p>See the SpectrumVoxel documentation</p></td>
+        </tr>
+        <tr>
+          <td>gain_pattern</td>
+          <td><a href="#GainPattern">GainPattern</a></td>
+          <td>optional</td>
+          <td><p>See the GainPattern documentation</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Spectrogram">Spectrogram</h3>
+    <p>a spectrogram defines a rectangular surface of time vs frequency vs power.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>psd</td>
+          <td><a href="#PSD">PSD</a></td>
+          <td>repeated</td>
+          <td><p>Each PSD represents one time slice of the spectrogram.
+The first slice represents time zero of the spectrogram. 
+It is assumed that each PSD in the spectrogram uses the same frequency limits.
+It is assumed each PSD in the spectrogram has the same duration. 
+The time duration covered by the spectrogram is assumed to be
+(number of PSD slices) * ( duration_ps of the first PSD slice).
+Start_hz, step_hz, and duration_ps must be defined for the first PSD slice.</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="SpectrumVoxel">SpectrumVoxel</h3>
+    <p>A SpectrumVoxel is one rectangular extent defined in frequency, time, and power.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>start_freq_hz</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p>the start of the frequency range, in Hz</p></td>
+        </tr>
+        <tr>
+          <td>stop_freq_hz</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p>the end of the frequency range, in Hz</p></td>
+        </tr>
+        <tr>
+          <td>start_time_ps</td>
+          <td><a href="#int64">int64</a></td>
+          <td>optional</td>
+          <td><p>the start of the time range, in relative picoseconds</p></td>
+        </tr>
+        <tr>
+          <td>stop_time_ps</td>
+          <td><a href="#int64">int64</a></td>
+          <td>optional</td>
+          <td><p>the end of the time range, in relative picoseconds</p></td>
+        </tr>
+        <tr>
+          <td>tx_power_dbm</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p>the transmit power used in decibels referenced to a milliwatt</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="TimeStamp">TimeStamp</h3>
+    <p>A Timestamp consists of the Unix epoch integer seconds and picoseconds
+This assumes most people will talk about time in terms of real world time from NTP</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>seconds</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>seconds since 1970</p></td>
+        </tr>
+        <tr>
+          <td>picoseconds</td>
+          <td><a href="#int64">int64</a></td>
+          <td>optional</td>
+          <td><p>fractional portion of the time, in picoseconds</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Collaborate.CollaborationType">Collaborate.CollaborationType</h3>
+    <p>The CollaborationType enum lists all the valid top level messages in the Collaboration
+Protocol</p>
+    <table class="enum-table">
+      <thead>
+        <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>UNKNOWN</td>
+          <td>0</td>
+          <td><p>new types will show up as UNKNOWN</p></td>
+        </tr>
+        <tr>
+          <td>HELLO</td>
+          <td>100</td>
+          <td><p>Hello message ID</p></td>
+        </tr>
+        <tr>
+          <td>INVALIDATE_MY_DECLARATION</td>
+          <td>101</td>
+          <td><p>InvalidateMyDeclaration message ID</p></td>
+        </tr>
+        <tr>
+          <td>MAKE_DECLARATION</td>
+          <td>102</td>
+          <td><p>MakeDeclaration message ID</p></td>
+        </tr>
+        <tr>
+          <td>REQUEST_YOUR_DEMAND</td>
+          <td>103</td>
+          <td><p>RequestYourDemand message ID</p></td>
+        </tr>
+        <tr>
+          <td>REQUEST_YOUR_RESOURCE_USE</td>
+          <td>104</td>
+          <td><p>RequestYourResourceUse message ID</p></td>
+        </tr>
+        <tr>
+          <td>REQUEST_YOUR_PERFORMANCE</td>
+          <td>105</td>
+          <td><p>RequestYourPerformance message ID</p></td>
+        </tr>
+        <tr>
+          <td>REQUEST_YOUR_OBSERVATION</td>
+          <td>106</td>
+          <td><p>RequestYourObservation message ID</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Demand.Type">Demand.Type</h3>
+    <p>each oneof field of Demand must be added to this enum as a convienient
+way to reference supported objects in the Hello message between networks</p>
+    <table class="enum-table">
+      <thead>
+        <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>UNKNOWN</td>
+          <td>0</td>
+          <td><p>new types will show up as UNKNOWN</p></td>
+        </tr>
+        <tr>
+          <td>THROUGHPUT</td>
+          <td>100</td>
+          <td><p>Throughput metric type ID</p></td>
+        </tr>
+        <tr>
+          <td>LATENCY</td>
+          <td>101</td>
+          <td><p>Latency metric type ID</p></td>
+        </tr>
+        <tr>
+          <td>PRIORITY</td>
+          <td>102</td>
+          <td><p>Priority metric type ID</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="MakeDeclaration.DeclarationType">MakeDeclaration.DeclarationType</h3>
+    <p>The DeclarationType enum lists all the valid top level declaration types</p>
+    <table class="enum-table">
+      <thead>
+        <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>UNKNOWN</td>
+          <td>0</td>
+          <td><p>new types will show up as UNKNOWN</p></td>
+        </tr>
+        <tr>
+          <td>DEMAND</td>
+          <td>100</td>
+          <td><p>top level Demand type ID</p></td>
+        </tr>
+        <tr>
+          <td>RESOURCE</td>
+          <td>101</td>
+          <td><p>top level Resource type ID</p></td>
+        </tr>
+        <tr>
+          <td>PERFORMANCE</td>
+          <td>102</td>
+          <td><p>top level Performance type ID</p></td>
+        </tr>
+        <tr>
+          <td>OBSERVATION</td>
+          <td>103</td>
+          <td><p>top level Observation type ID</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Observation.Type">Observation.Type</h3>
+    <p>each subclass of Observation must be added to this enum as a convienient
+way to reference supported objects in the Hello message between networks</p>
+    <table class="enum-table">
+      <thead>
+        <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>UNKNOWN</td>
+          <td>0</td>
+          <td><p>new types will show up as UNKNOWN</p></td>
+        </tr>
+        <tr>
+          <td>PSD</td>
+          <td>100</td>
+          <td><p>PSD type ID</p></td>
+        </tr>
+        <tr>
+          <td>SPECTROGRAM</td>
+          <td>101</td>
+          <td><p>Spectrogram type ID</p></td>
+        </tr>
+        <tr>
+          <td>NODE_LOCATIONS</td>
+          <td>102</td>
+          <td><p>NodeLocations type ID</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Performance.Type">Performance.Type</h3>
+    <p></p>
+    <table class="enum-table">
+      <thead>
+        <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>UNKNOWN</td>
+          <td>0</td>
+          <td><p>new types will show up as UNKNOWN</p></td>
+        </tr>
+        <tr>
+          <td>SCALAR_PERFORMANCE</td>
+          <td>100</td>
+          <td><p>ScalarPerformance type ID</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Resource.Type">Resource.Type</h3>
+    <p>Each oneof field of Resource must be added to this enum as a convienient
+way to reference supported objects in the Hello message between networks</p>
+    <table class="enum-table">
+      <thead>
+        <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>UNKNOWN</td>
+          <td>0</td>
+          <td><p>new types will show up as UNKNOWN</p></td>
+        </tr>
+        <tr>
+          <td>SPECTRUM_VOXEL</td>
+          <td>100</td>
+          <td><p>SpectrumVoxel type ID</p></td>
+        </tr>
+        <tr>
+          <td>GAIN_PATTERN</td>
+          <td>101</td>
+          <td><p>GainPattern type ID</p></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 id="scalar-value-types">Scalar Value Types</h2>
+    <table class="scalar-value-types-table">
+      <thead>
+        <tr><td>.proto Type</td><td>Notes</td><td>C++ Type</td><td>Java Type</td><td>Python Type</td></tr>
+      </thead>
+      <tbody>
+        <tr id="double">
+          <td>double</td>
+          <td></td>
+          <td>double</td>
+          <td>double</td>
+          <td>float</td>
+        </tr>
+        <tr id="float">
+          <td>float</td>
+          <td></td>
+          <td>float</td>
+          <td>float</td>
+          <td>float</td>
+        </tr>
+        <tr id="int32">
+          <td>int32</td>
+          <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.</td>
+          <td>int32</td>
+          <td>int</td>
+          <td>int</td>
+        </tr>
+        <tr id="int64">
+          <td>int64</td>
+          <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.</td>
+          <td>int64</td>
+          <td>long</td>
+          <td>int/long</td>
+        </tr>
+        <tr id="uint32">
+          <td>uint32</td>
+          <td>Uses variable-length encoding.</td>
+          <td>uint32</td>
+          <td>int</td>
+          <td>int/long</td>
+        </tr>
+        <tr id="uint64">
+          <td>uint64</td>
+          <td>Uses variable-length encoding.</td>
+          <td>uint64</td>
+          <td>long</td>
+          <td>int/long</td>
+        </tr>
+        <tr id="sint32">
+          <td>sint32</td>
+          <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.</td>
+          <td>int32</td>
+          <td>int</td>
+          <td>int</td>
+        </tr>
+        <tr id="sint64">
+          <td>sint64</td>
+          <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.</td>
+          <td>int64</td>
+          <td>long</td>
+          <td>int/long</td>
+        </tr>
+        <tr id="fixed32">
+          <td>fixed32</td>
+          <td>Always four bytes. More efficient than uint32 if values are often greater than 2^28.</td>
+          <td>uint32</td>
+          <td>int</td>
+          <td>int</td>
+        </tr>
+        <tr id="fixed64">
+          <td>fixed64</td>
+          <td>Always eight bytes. More efficient than uint64 if values are often greater than 2^56.</td>
+          <td>uint64</td>
+          <td>long</td>
+          <td>int/long</td>
+        </tr>
+        <tr id="sfixed32">
+          <td>sfixed32</td>
+          <td>Always four bytes.</td>
+          <td>int32</td>
+          <td>int</td>
+          <td>int</td>
+        </tr>
+        <tr id="sfixed64">
+          <td>sfixed64</td>
+          <td>Always eight bytes.</td>
+          <td>int64</td>
+          <td>long</td>
+          <td>int/long</td>
+        </tr>
+        <tr id="bool">
+          <td>bool</td>
+          <td></td>
+          <td>bool</td>
+          <td>boolean</td>
+          <td>boolean</td>
+        </tr>
+        <tr id="string">
+          <td>string</td>
+          <td>A string must always contain UTF-8 encoded or 7-bit ASCII text.</td>
+          <td>string</td>
+          <td>String</td>
+          <td>str/unicode</td>
+        </tr>
+        <tr id="bytes">
+          <td>bytes</td>
+          <td>May contain any arbitrary sequence of bytes.</td>
+          <td>string</td>
+          <td>ByteString</td>
+          <td>str</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </body>
+</html>

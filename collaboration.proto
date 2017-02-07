@@ -1,0 +1,478 @@
+// uses V3.0 of the Protocol Buffer Specification
+syntax = "proto3";
+
+//=================================================================================================
+//
+// SC2 Phase 1 Collaboration Protocol Specification
+//
+//=================================================================================================
+
+
+
+//=================================================================================================
+// The following section contains primitive types that all users must support 
+//=================================================================================================
+
+/// A Timestamp consists of the Unix epoch integer seconds and picoseconds
+// This assumes most people will talk about time in terms of real world time from NTP
+message TimeStamp
+{
+    int32 seconds = 1; /// seconds since 1970
+    int64 picoseconds = 2; /// fractional portion of the time, in picoseconds
+}
+
+/// Location in terms of latitude, longitude, and elevation
+// The intent is to make this close to what will be provided directly to SRNs
+message Location
+{
+    double latitude = 1; /// latitude in decimal degrees
+    double longitude = 2; /// longitude in decimal degrees
+    double elevation = 3; /// meters above sea level
+}
+
+
+//=================================================================================================
+// The following section contains the polymorphic types supporting informational exchanges
+//  Note: None of these messages are intended to be sent "bare"
+//  It is expected that all of the messages in this section will be encapsulated 
+//=================================================================================================
+
+// ------------------------------------------------------------------------------------------------
+// Resource section: the following messages are all network resources
+//
+
+/// A Resource is something that a radio network might use. 
+// For example, a radio network can make use of the spectrum of the spectrum in a given 
+// time/frequency/power voxel, or it can chose to steer a null in a given direction
+message Resource 
+{
+    /// Each oneof field of Resource must be added to this enum as a convienient
+    // way to reference supported objects in the Hello message between networks
+    enum Type 
+    {
+        UNKNOWN = 0; /// new types will show up as UNKNOWN
+        SPECTRUM_VOXEL = 100; /// SpectrumVoxel type ID
+        GAIN_PATTERN = 101; /// GainPattern type ID
+    }
+
+    //---------- support periodic resource specifications -----------------------------------------
+    
+    /// tells whether or not this resource specification should be considered to be periodic
+    bool is_periodic = 1;
+
+    /// period_ps is in picoseconds.
+    // If the resource is declared to be periodic, this defines the repetition period.
+    // This parameter has no meaning if is_periodic is false.     
+    int64 period_ps = 2;
+
+    /// Only one of these fields can be filled out per individual Resource message
+    oneof payload 
+    {
+        SpectrumVoxel spectrum_voxel = 100; /// See the SpectrumVoxel documentation
+        GainPattern gain_pattern = 101; /// See the GainPattern documentation 
+    }    
+}
+
+/// A SpectrumVoxel is one rectangular extent defined in frequency, time, and power. 
+message SpectrumVoxel
+{
+
+    /// the start of the frequency range, in Hz
+    double start_freq_hz = 1; 
+
+    /// the end of the frequency range, in Hz
+    double stop_freq_hz = 2; 
+
+    /// the start of the time range, in relative picoseconds
+    int64 start_time_ps = 3; 
+
+    /// the end of the time range, in relative picoseconds
+    int64 stop_time_ps = 4;
+
+    /// the transmit power used in decibels referenced to a milliwatt
+    double tx_power_dbm = 5;     
+}
+
+/// A GainPattern is a sequence of power values in dB versus azimuth angle. This could represent
+// an antenna pattern or the beam pattern resulting from steering a null
+message GainPattern
+{
+    /// Gain at a sequence of points, in dB. To be determined if this is most useful as 
+    // defined relative to peak gain (max will always be 0dB) or relative
+    // to an isotropic radiator (dBi)
+    repeated double gain_pattern_db = 1;
+
+    /// Azimuth of the first point in the gain sequence, in degrees. 0 == North 
+    double start_azimuth_deg = 2; 
+
+    /// Difference in azimuth between two adjacent gain values in the gain list, in degrees. 
+    double step_azimuth_deg = 3;   
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// Performance section: the following messages are all network performance metrics
+//
+
+/// A Performance object is meant to encapsulate some sort of metric important to the network. 
+// Performance objects optionally include the concept of source and destination nodes in order
+// to tie Performance metrics to flows between specific nodes in a network, if appropriate.
+message Performance 
+{
+    // each oneof field of Performance must be added to this enum as a convienient
+    // way to reference supported objects in the Hello message between networks
+    enum Type 
+    {
+        UNKNOWN = 0; /// new types will show up as UNKNOWN
+        SCALAR_PERFORMANCE = 100; /// ScalarPerformance type ID
+    }
+
+    // --------------------------------------------------------------------------------------------
+    // a performance can optionally include either a source node, a destination node,
+    // both, or neither. 
+
+    /// source node for the traffic associated with the performance
+    int32 source_node = 1;
+    
+    /// destination node for the traffic associated with the performance
+    int32 destination_node = 2; 
+
+    /// only one of these fields can be filled out per individual Performance message
+    oneof payload 
+    {
+        /// scalar_performance is defined as a real number from 0 to 1. 
+        // O means things can't get worse,
+        // 1 means everything is great
+        double scalar_performance = 100; 
+    }
+}
+
+// ------------------------------------------------------------------------------------------------
+// Demand section: the following messages are all network demand descriptions
+//
+
+/// A Demand object is meant to encapsulate something that is driving the network. 
+// If a network has no demands, it technically has no need to transmit. A Demand might be
+// a requirement on certain amount of throughput for the traffic the network must service, 
+// or a maximum tolerable latency. Demand objects optionally include the concept of a 
+// source and destination node such that Demands could be tied to a flow between specific nodes
+// in a network.
+message Demand // abstract top level class
+{
+    /// each oneof field of Demand must be added to this enum as a convienient
+    // way to reference supported objects in the Hello message between networks
+    enum Type   
+    {
+        UNKNOWN = 0; /// new types will show up as UNKNOWN
+        THROUGHPUT = 100; /// Throughput metric type ID
+        LATENCY = 101; /// Latency metric type ID
+        PRIORITY = 102; /// Priority metric type ID
+    }
+
+    // --------------------------------------------------------------------------------------------
+    // a demand can optionally include either a source node, a destination node,
+    // or both. 
+
+    /// source node for the traffic associated with the demand
+    int32 source_node = 1;
+    
+    /// destination node for the traffic associated with the demand
+    int32 destination_node = 2;  
+
+    
+    /// only one of these fields can be filled out per individual Demand message
+    oneof payload 
+    {
+        /// throughput is defined as bits per second
+        double throughput = 100;
+
+        /// latency is defined in seconds
+        double latency = 101;
+
+        /// priority is initially arbitrarily defined between 0 and 1
+        double priority = 102;  
+    }  
+
+}
+
+// ------------------------------------------------------------------------------------------------
+// Observation section: the following messages are all types of observations
+//
+
+/// An Observation is something that can be directly viewed by a node or network. This may be
+// something like the current position information a node is seeing, or the power spectral density
+// a node saw at a specific point over a particular time range. Observations are optionally tied
+// to a location or a specific node in a network. 
+message Observation // abstract top level class
+{
+    /// each subclass of Observation must be added to this enum as a convienient
+    // way to reference supported objects in the Hello message between networks
+    enum Type 
+    {
+        UNKNOWN = 0; /// new types will show up as UNKNOWN
+        PSD = 100; /// PSD type ID
+        SPECTROGRAM = 101; /// Spectrogram type ID
+        NODE_LOCATIONS = 102; /// NodeLocations type ID
+    }
+
+    Location location = 1; /// optional field used to specify the location of the observation
+    int32 node_id  = 2; /// optional field used to specify the node id of the observer
+
+
+    /// only one of these fields can be filled out per individual Observation message
+    oneof payload 
+    {
+        PSD psd = 100; /// See the PSD documentation
+        Spectrogram spectrogram = 101; /// See the Spectrogram documentation
+        Node_Locations node_locations = 102; /// See the Node_Locations documentation
+        
+    }   
+}
+
+
+/// a Power Spectral Density defines a trace of power vs frequency.
+message PSD
+{
+    /// express the observed power spectral density as a sequence of
+    // power values in dBm/Hz, with the first value in the power_density 
+    // sequence corresponding to start_hz
+    repeated double power_density_dbm_hz = 1;
+    
+    /// frequency in Hz associated with the first value in the power_density_dbm_hz sequence
+    double start_hz = 2;
+
+    /// difference in frequency in Hz between each value in the power_density_dbm_hz sequence  
+    double step_hz = 3;
+
+    /// the duration in picoseconds over which this PSD was calculated
+    int64 duration_ps = 4;
+}
+
+
+/// a spectrogram defines a rectangular surface of time vs frequency vs power.
+message Spectrogram
+{
+    /// Each PSD represents one time slice of the spectrogram.
+    // The first slice represents time zero of the spectrogram. 
+    // It is assumed that each PSD in the spectrogram uses the same frequency limits.
+    // It is assumed each PSD in the spectrogram has the same duration. 
+    // The time duration covered by the spectrogram is assumed to be
+    // (number of PSD slices) * ( duration_ps of the first PSD slice).
+    // Start_hz, step_hz, and duration_ps must be defined for the first PSD slice.      
+    repeated PSD psd = 1;    
+}
+
+/// Mapping of node ID to location for some number of nodes in a network
+message Node_Locations
+{
+    /// maps node ID to a location
+    map<int32, Location> node_locations = 1; 
+}
+
+
+
+
+//=================================================================================================
+// The following section contains the messages supporting informational exchanges 
+//=================================================================================================
+
+/// A Hello message is an initial peer-to-peer handshake that all networks must support
+message Hello
+{
+    /// A dialect is used to declare what messages a network can understand or generate
+    message Dialect 
+    {
+
+        repeated int32 supported_collaboration_list = 1; /// list of supported top level messages
+        repeated int32 supported_resource_list = 2; /// list of supported Resource types
+        repeated int32 supported_performance_list = 3; /// list of supported Performance types
+        repeated int32 supported_demand_list = 4; /// list of supported Demand types
+        repeated int32 supported_observation_list = 5; /// list of supported Observation types
+
+        //TODO: make another pass to collect any missing message IDs
+    }
+
+    Dialect my_dialect = 1; /// define the messages that this network supports 
+    int32 my_network_id = 2; /// include the network ID of the network that generated this message
+}
+
+// ------------------------------------------------------------------------------------------------
+// Declarative statemant section
+//
+
+/// Use this to cancel a previous declaration before it is due to expire.
+// No, you cannot issue an InvalidateMyDeclaration on an InvalidateMyDeclaration message. 
+message InvalidateMyDeclaration 
+{
+    /// ID of the statement to be cancelled. 
+    // There is no support for a network to invalidate the statement
+    // of a different network. 
+    int32 invalid_statement_id = 1; 
+    int32 my_network_id = 2; /// My Network ID. 
+}
+
+/// Use this message to declare something to other networks.
+// Note that making a declaration with a mix of Demand, Resource, Performance, or 
+// Observation objects implies there is a relationship between them. 
+// For example, declaring a Demand along with a Resource would imply 
+// the intent to use the specified Resource to service the specified Demand.
+message MakeDeclaration
+{
+
+    /// The DeclarationType enum lists all the valid top level declaration types
+    enum DeclarationType
+    {
+        UNKNOWN = 0; /// new types will show up as UNKNOWN
+        DEMAND = 100; /// top level Demand type ID
+        RESOURCE = 101; /// top level Resource type ID
+        PERFORMANCE = 102; /// top level Performance type ID
+        OBSERVATION = 103; /// top level Observation type ID
+    }
+
+    /// included to allow networks to invalidate their own previous statements.
+    // Statement IDs must be unique within a single network.  
+    int32 statement_id = 1; 
+    int32 my_network_id = 2; /// My Network ID. 
+
+    /// the time at which this statement is valid. Times in the past imply
+    // a relaying of historical or measured information.
+    // Times in the future imply an intent or a plan.
+    // A start time of zero implies "Now"
+    TimeStamp start_time = 3;
+
+    /// A duration of zero implies the statement applies to an instant in time.
+    // A duration of the max value of an int64 implies infinity.
+    int64 duration_ps = 4;
+    
+    /// mixing different classes implies that there is a relationship between the 
+    // union of everything in the Declaration
+    repeated Demand demand = 100; /// See the Demand data type documentation
+    repeated Resource resource = 101; /// See the Resource data type documentation
+    repeated Performance performance = 102; /// See the Performance data type documentation
+    repeated Observation observation = 103; /// See the Observation data type documentation
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// Interrogative statemant section
+//
+
+/// Use this message to request another network's demand. 
+// You request this in terms of the specific data structure you are interested in,
+// along with the starting time and duration of your time period of interest. You may also
+// specify a source and/or destination node if you are interested in a specific flow
+message RequestYourDemand
+{
+    repeated int32 demand_types = 1; /// Which specific demand metric are you interested in?
+    TimeStamp start_time = 2; /// What time period are you interested in? Past, present, future?
+    int64 duration_ps = 3; /// How much time are you interested in, ie what is the integration time?
+    int32 my_network_id = 4; /// Who am I?
+
+
+    // you may optionally request a network's demand by source node,
+    // destination node, or source/destination pair
+
+    /// source node for the traffic associated with the demand
+    int32 source_node = 5;
+    
+    /// destination node for the traffic associated with the demand
+    int32 destination_node = 6;  
+}
+
+/// Use this message to request another network's Resource Use.
+// You request this in terms of the specific data structure you are interested in,
+// along with the starting time and duration of your time period of interest.  
+message RequestYourResourceUse
+{
+    repeated int32 resource_types = 1; /// Which specific resource are you interested in?
+    TimeStamp start_time = 2; /// What time period are you interested in? Past, present, future?
+    int64 duration_ps = 3; /// How much time are you interested in, ie what is the integration time?
+    int32 my_network_id = 4; /// Who am I?
+}
+
+/// Use this message to request another network's Performance.
+// You request this in terms of the specific data structure you are interested in,
+// along with the starting time and duration of your time period of interest. You may also
+// specify a source and/or destination node if you are interested in a specific flow
+message RequestYourPerformance
+{
+    repeated int32 performance_types = 1; /// Which specific performance metric are you interested in?
+    TimeStamp start_time = 2; /// What time period are you interested in? Past, present, future?
+    int64 duration_ps = 3; /// How much time are you interested in, ie what is the integration time?
+    int32 my_network_id = 4; /// Who am I?
+
+    // you may optionally request a network's performance by source node,
+    // destination node, or source/destination pair
+
+    /// source node for the traffic associated with the demand
+    int32 source_node = 5;
+    
+    /// destination node for the traffic associated with the demand
+    int32 destination_node = 6;  
+
+}
+
+/// Use this message to request another network to make an observation for you.
+// You request this in terms of the specific data structure you are interested in,
+// along with the starting time and duration of your time period of interest. You can
+// also specify either the location or node_id for where you wish this observation to be made.
+message RequestYourObservation
+{
+    repeated int32 observation_types = 1; /// Which specific observation are you interested in?
+    TimeStamp start_time = 2; /// What time period are you interested in? Past, present, future?
+    int64 duration_ps = 3; /// How much time are you interested in, ie what is the integration time?
+    int32 my_network_id = 4; /// Who am I?
+    Location location = 5; /// optional field used to specify the location of the observation
+    int32 node_id  = 6; /// optional field used to specify the node id of the observer
+}
+
+
+
+//=================================================================================================
+// The following section contains the top level wrapper message 
+//=================================================================================================
+
+/// The Collaborate message is a simple wrapper that allows users to determine the type of message
+// they just received. Every message to be sent to another network must be encapsulated in a 
+// Collaborate message
+message Collaborate
+{
+
+    /// The CollaborationType enum lists all the valid top level messages in the Collaboration
+    // Protocol
+    enum CollaborationType
+    {
+        UNKNOWN = 0; /// new types will show up as UNKNOWN
+        HELLO = 100; /// Hello message ID
+        INVALIDATE_MY_DECLARATION = 101; /// InvalidateMyDeclaration message ID
+        MAKE_DECLARATION = 102; /// MakeDeclaration message ID
+        REQUEST_YOUR_DEMAND = 103; /// RequestYourDemand message ID
+        REQUEST_YOUR_RESOURCE_USE = 104; /// RequestYourResourceUse message ID
+        REQUEST_YOUR_PERFORMANCE = 105; /// RequestYourPerformance message ID
+        REQUEST_YOUR_OBSERVATION = 106; /// RequestYourObservation message ID
+    }
+
+    oneof payload
+    {
+        /// See Hello documentation
+        Hello hello = 1; 
+
+        /// See InvalidateMyDeclaration documentation
+        InvalidateMyDeclaration invalidate_my_declaration = 2;
+
+        /// See MakeDeclaration documentation
+        MakeDeclaration make_declaration = 3;
+ 
+        /// See RequestYourDemand documentation
+        RequestYourDemand request_your_demand = 4;
+  
+        /// See RequestYourResourceUse documentation
+        RequestYourResourceUse request_your_resource_use = 5;
+ 
+        /// See RequestYourPerformance documentation
+        RequestYourPerformance request_your_performance = 6;
+ 
+        /// See RequestYourObservation documentation
+        RequestYourObservation request_your_observation = 7; 
+    }
+}
