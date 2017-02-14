@@ -288,7 +288,8 @@ message Hello
         repeated int32 supported_performance_list = 3; /// list of supported Performance types
         repeated int32 supported_demand_list = 4; /// list of supported Demand types
         repeated int32 supported_observation_list = 5; /// list of supported Observation types
-
+        repeated int32 supported_declaration_list = 6; /// list of supported declaration messages
+        
         //TODO: make another pass to collect any missing message IDs
     }
 
