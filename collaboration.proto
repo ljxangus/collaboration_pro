@@ -269,6 +269,80 @@ message Node_Locations
     map<int32, Location> node_locations = 1; 
 }
 
+// ------------------------------------------------------------------------------------------------
+// Capability section: the following messages are all types of capabilities
+//
+
+/// A Capability is something that describes how a CIR network is able to operate. This may be
+// something like description of PHY layer configurability, or information on MAC type. It is 
+// assumed to be used for describing the totality of a CIR capability, as opposed to what is 
+// the exact current configuration of that capability (the requesting of which is handled under
+// a different message type).
+message Capability // abstract top level class
+{
+    /// each subclass of Capability must be added to this enum as a convienient
+    // way to reference supported objects in the Hello message between networks
+    enum Type 
+    {
+        UNKNOWN = 0; /// new types will show up as UNKNOWN
+        CHANNELIZATION = 100; /// Channelization type ID
+        FRAMING = 101; /// Time framing type ID
+    }
+
+    /// only one of these fields can be filled out per individual Capability message
+    oneof payload 
+    {
+        Channelization channelization = 100; /// See the PSD documentation
+        Framing framing = 101; /// See the Spectrogram documentation
+    }   
+}
+
+/// the Channelization data type defines the flexibility of the RR's frequency usage within a CIRN
+message CHANNELIZATION
+{
+    /// state the minimum and maximum bandwidth possible for a single channel
+    // if a CIRN has a morphological waveform that can use anywhere from 1Hz to the full 
+    // available analog bandwidth (here assumed to be 80MHz), then min_bw would be 1 and 
+    // max_bw would be 8e7 (units assumed to be in Hz).
+    double min_chan_bw_hz = 1;
+    double max_chan_bw_hz = 2;
+    
+    /// state whether the CIRN operates across multiple channels and how many
+    // if single-channel, then min = max = 1.
+    int32 min_chans = 3;
+    int32 max_chans = 4;
+
+    /// boolean for whether the CIRN uses static frequency center(s).  
+    bool static_fcs = 5;
+
+    /// boolean for whether or not channels will always be grouped together in a contiguous band
+    bool is_contiguous = 6;
+}
+
+
+/// the framing a CIRN uses provides information about its ability to control time usage
+message Framing
+{
+    /// boolean for whether the CIRN uses a statically defined frame structure
+    bool is_static = 1;
+    
+    /// optional field for specifying the frame duration (in ps), unless the CIRN has a static
+    // frame time (as specified by is_static, above), it is expected this value would likely be
+    // not defined in any initial declarative form of the message, but would be present in response
+    // to request messages where the current frame_duration is requested.
+    int64 frame_duration_ps = 2;
+    
+    /// optional field for specifying the relative time offset of the start of the CIRNs frame
+    // from the NTP's second timehack
+    int64 frame_ref_toNTP_ps = 3;
+    
+    /// optional field for specifying the finer grained timing structure of the CIRNs PHY/MAC.
+    // unless the frame is static (again as described above) for all time, it is expected this
+    // field would not be defined in any initial declaritive form of he message, but would be
+    // present in response to request messages where the current slot structure is requested.
+    // The sum of these durations should equal the current frame_duration (if requested).
+    repeated int64 slot_durations_ps = 4;
+}
 
 
 
@@ -289,7 +363,8 @@ message Hello
         repeated int32 supported_demand_list = 4; /// list of supported Demand types
         repeated int32 supported_observation_list = 5; /// list of supported Observation types
         repeated int32 supported_declaration_list = 6; /// list of supported declaration messages
-        
+        repeated int32 supported_capability_list = 7; /// list of supported Capability types
+
         //TODO: make another pass to collect any missing message IDs
     }
 
@@ -335,6 +410,7 @@ message MakeDeclaration
         RESOURCE = 101; /// top level Resource type ID
         PERFORMANCE = 102; /// top level Performance type ID
         OBSERVATION = 103; /// top level Observation type ID
+        CAPABILITY = 104; /// top level Capability type ID
     }
 
     /// included to allow networks to invalidate their own previous statements.
@@ -358,6 +434,7 @@ message MakeDeclaration
     repeated Resource resource = 101; /// See the Resource data type documentation
     repeated Performance performance = 102; /// See the Performance data type documentation
     repeated Observation observation = 103; /// See the Observation data type documentation
+    repeated Capability capability = 104; /// See the Capability data type documentation
 }
 
 
@@ -434,6 +511,19 @@ message RequestYourObservation
     int32 node_id  = 6; /// optional field used to specify the node id of the observer
 }
 
+/// Use this message to request detailed about another networks current configuration
+// within its capability set. Optionally, you can specify the location or node_id where
+// you are interested in understanding the currently configured capability.
+message RequesetYourCapabilityUse
+{
+    repeated int32 capability_types = 1; /// which capability are you interested in?
+    TimeStamp start_time = 2; /// optional field: What time period are you interested in? Past, present, future?
+    int64 duration_ps = 3; /// optional field: How much time are you interested in, ie what is the integration time?
+    /// if start_time and duration_ps are undefined, it means another CIRN is requesting a CIRN's overall capability, not the specific usage
+    int32 my_network_id = 4; /// Who am I?
+    Location location = 5; /// optional field used to specify the location of the observation
+    int32 node_id  = 6; /// optional field used to specify the node id of the observer
+}
 
 
 //=================================================================================================
@@ -459,6 +549,7 @@ message Collaborate
         REQUEST_YOUR_PERFORMANCE = 105; /// RequestYourPerformance message ID
         REQUEST_YOUR_OBSERVATION = 106; /// RequestYourObservation message ID
         ACKNOWLEDGEMENT = 107; /// Acknowledgement message ID
+        REQUEST_YOUR_CAPABILITY_USE = 108; /// RequestYourCapabilityUse message ID
     }
 
     oneof payload
@@ -483,5 +574,8 @@ message Collaborate
  
         /// See RequestYourObservation documentation
         RequestYourObservation request_your_observation = 7; 
+        
+        /// See RequestYourCapabilityUse documentation
+        RequestYourCapabilityUse request_your_capability_use = 8;
     }
 }
