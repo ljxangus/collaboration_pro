@@ -45,6 +45,25 @@ RequestYourCurrentCapabilityUse
 	}
 ```
 
+# Recommended new field in *interrogative* messages & an additional message type *RequestDenied*
+
+## Motivation
+
+Declarations already have a way to invalidate them, it would be best if the interrogative messages had a way for the receiptiant CIRNs to let the requester know that they will not be servicing the request (even if they have the dialect ability to do so). This can save throughput on the collaboration channel by cutting down on messaging that will take longer to collect the data for and send over the collaboration channel than the data will be useful for. 
+This requires two elements. First, there must be a request_id field in all interrogative messages sent between CIRs (similar to the statement_id field in declaritive messages). This gives the receiving CIRN a reference to use when responding. Second, it would imply a *RequestDenied* message, which a CIRN could use to respond over the collaboration channel to politely let another CIRN know that he requested information will not be forth coming.
+
+## Example
+
+The simplest example for this need is if a CIRN sends a request that the receiving CIRN determines is going to take a significant amount of its resources (over the air transmissions between nodes, etc.) and that by the time the information can be collected, the specified duration in the request would have already passed. It would be save the receiving CIRN a lot of time, and would be polite to the requesting CIRN, if a simply *denied* message could be returned, thereby saving the receiving CIRN time as well as saving the sending CIRN from a period of expecting a response and having the requested window fly by without one.
+
+```
+RequestDenied
+{
+	request_id
+	my_network_id
+	}
+```
+
 # Suggestions without a corresponding code merge request (thoughts for the future)
 
 - CIRNs would likely love to have a messaging means of asking (and answering) the question of WHY something occured (i.e. "Why did you rate your performance over the last interval as 0.5"). This could be answered in a variety of forms

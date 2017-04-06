@@ -452,7 +452,7 @@ message RequestYourDemand
     TimeStamp start_time = 2; /// What time period are you interested in? Past, present, future?
     int64 duration_ps = 3; /// How much time are you interested in, ie what is the integration time?
     int32 my_network_id = 4; /// Who am I?
-
+    int32 request_id = 7; /// included to allow networks to politely deny requests, must be unique within a single network.
 
     // you may optionally request a network's demand by source node,
     // destination node, or source/destination pair
@@ -473,6 +473,7 @@ message RequestYourResourceUse
     TimeStamp start_time = 2; /// What time period are you interested in? Past, present, future?
     int64 duration_ps = 3; /// How much time are you interested in, ie what is the integration time?
     int32 my_network_id = 4; /// Who am I?
+    int32 request_id = 5; /// included to allow networks to politely deny requests, must be unique within a single network.
 }
 
 /// Use this message to request another network's Performance.
@@ -485,6 +486,7 @@ message RequestYourPerformance
     TimeStamp start_time = 2; /// What time period are you interested in? Past, present, future?
     int64 duration_ps = 3; /// How much time are you interested in, ie what is the integration time?
     int32 my_network_id = 4; /// Who am I?
+    int32 request_id = 7; /// included to allow networks to politely deny requests, must be unique within a single network.
 
     // you may optionally request a network's performance by source node,
     // destination node, or source/destination pair
@@ -507,6 +509,7 @@ message RequestYourObservation
     TimeStamp start_time = 2; /// What time period are you interested in? Past, present, future?
     int64 duration_ps = 3; /// How much time are you interested in, ie what is the integration time?
     int32 my_network_id = 4; /// Who am I?
+    int32 request_id = 7; /// included to allow networks to politely deny requests, must be unique within a single network.
     Location location = 5; /// optional field used to specify the location of the observation
     int32 node_id  = 6; /// optional field used to specify the node id of the observer
 }
@@ -521,10 +524,20 @@ message RequesetYourCapabilityUse
     int64 duration_ps = 3; /// optional field: How much time are you interested in, ie what is the integration time?
     /// if start_time and duration_ps are undefined, it means another CIRN is requesting a CIRN's overall capability, not the specific usage
     int32 my_network_id = 4; /// Who am I?
+    int32 request_id = 7; /// included to allow networks to politely deny requests, must be unique within a single network.
     Location location = 5; /// optional field used to specify the location of the observation
     int32 node_id  = 6; /// optional field used to specify the node id of the observer
 }
 
+/// Use this message to let another network know that you will not be fulfilling their request
+// A future version of this message type might include reason types
+message RequestDenied
+{
+    /// ID of the request being denied. 
+    int32 denied_request_id = 1;
+    int32 requesting_network_id = 2; /// ID of the network which initiated the request
+    int32 my_network_id = 3; /// My Network ID.
+}
 
 //=================================================================================================
 // The following section contains the top level wrapper message 
@@ -550,6 +563,7 @@ message Collaborate
         REQUEST_YOUR_OBSERVATION = 106; /// RequestYourObservation message ID
         ACKNOWLEDGEMENT = 107; /// Acknowledgement message ID
         REQUEST_YOUR_CAPABILITY_USE = 108; /// RequestYourCapabilityUse message ID
+        REQUEST_DENIED = 109; /// RequestDenied message ID
     }
 
     oneof payload
@@ -577,5 +591,8 @@ message Collaborate
         
         /// See RequestYourCapabilityUse documentation
         RequestYourCapabilityUse request_your_capability_use = 8;
+        
+        /// See RequestDenied documentation
+        RequestDenied request_denied = 9;
     }
 }
