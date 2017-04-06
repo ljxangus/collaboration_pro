@@ -297,6 +297,13 @@ message Hello
     int32 my_network_id = 2; /// include the network ID of the network that generated this message
 }
 
+///An Acknowledgement message to simply satisfy sender that its message has been recieved by the intended reciever
+message Acknowledgement
+{
+    int32 ack_id = 1; /// statement id that this ack is acknowledging
+    int32 my_network_id = 2; /// include the network ID of the network that generated this message
+}
+
 // ------------------------------------------------------------------------------------------------
 // Declarative statemant section
 //
@@ -451,6 +458,7 @@ message Collaborate
         REQUEST_YOUR_RESOURCE_USE = 104; /// RequestYourResourceUse message ID
         REQUEST_YOUR_PERFORMANCE = 105; /// RequestYourPerformance message ID
         REQUEST_YOUR_OBSERVATION = 106; /// RequestYourObservation message ID
+        ACKNOWLEDGEMENT = 107; /// Acknowledgement message ID
     }
 
     oneof payload
