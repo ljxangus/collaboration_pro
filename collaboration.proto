@@ -53,6 +53,7 @@ message Resource
         UNKNOWN = 0; /// new types will show up as UNKNOWN
         SPECTRUM_VOXEL = 100; /// SpectrumVoxel type ID
         GAIN_PATTERN = 101; /// GainPattern type ID
+        NUMBER_OF_ANTENNAS = 102 /// NumberOfAntennas type ID
     }
 
     //---------- support periodic resource specifications -----------------------------------------
@@ -69,7 +70,8 @@ message Resource
     oneof payload 
     {
         SpectrumVoxel spectrum_voxel = 100; /// See the SpectrumVoxel documentation
-        GainPattern gain_pattern = 101; /// See the GainPattern documentation 
+        GainPattern gain_pattern = 101; /// See the GainPattern documentation
+        NumberOfAntennas number_of_antennas = 102 /// See the NUmberOfAntennas documentation  
     }    
 }
 
@@ -109,6 +111,12 @@ message GainPattern
     double step_azimuth_deg = 3;   
 }
 
+/// The number of antennas here implies the number of antennas used to satisfy a demand. It refers particularly to the hardware used.
+message NumberOfAntennas
+{
+    /// Actual count of the antennas used.
+    int64 antenna_count = 1
+} 
 
 // ------------------------------------------------------------------------------------------------
 // Performance section: the following messages are all network performance metrics
