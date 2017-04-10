@@ -53,7 +53,7 @@ message Resource
         UNKNOWN = 0; /// new types will show up as UNKNOWN
         SPECTRUM_VOXEL = 100; /// SpectrumVoxel type ID
         GAIN_PATTERN = 101; /// GainPattern type ID
-        NUMBER_OF_ANTENNAS = 102 /// NumberOfAntennas type ID
+        
     }
 
     //---------- support periodic resource specifications -----------------------------------------
@@ -71,7 +71,6 @@ message Resource
     {
         SpectrumVoxel spectrum_voxel = 100; /// See the SpectrumVoxel documentation
         GainPattern gain_pattern = 101; /// See the GainPattern documentation
-        NumberOfAntennas number_of_antennas = 102 /// See the NUmberOfAntennas documentation  
     }    
 }
 
@@ -110,13 +109,6 @@ message GainPattern
     /// Difference in azimuth between two adjacent gain values in the gain list, in degrees. 
     double step_azimuth_deg = 3;   
 }
-
-/// The number of antennas here implies the number of antennas used to satisfy a demand. It refers particularly to the hardware used.
-message NumberOfAntennas
-{
-    /// Actual count of the antennas used.
-    int64 antenna_count = 1
-} 
 
 // ------------------------------------------------------------------------------------------------
 // Performance section: the following messages are all network performance metrics
@@ -295,6 +287,7 @@ message Capability // abstract top level class
         UNKNOWN = 0; /// new types will show up as UNKNOWN
         CHANNELIZATION = 100; /// Channelization type ID
         FRAMING = 101; /// Time framing type ID
+        NUMBER_OF_ANTENNAS = 102 /// NumberOfAntennas type ID
     }
 
     /// only one of these fields can be filled out per individual Capability message
@@ -302,18 +295,19 @@ message Capability // abstract top level class
     {
         Channelization channelization = 100; /// See the PSD documentation
         Framing framing = 101; /// See the Spectrogram documentation
+        int32 number_of_antennas = 102 /// Number of antennas available to a node  
     }   
 }
 
 /// the Channelization data type defines the flexibility of the RR's frequency usage within a CIRN
-message CHANNELIZATION
+message Channelization
 {
     /// state the minimum and maximum bandwidth possible for a single channel
     // if a CIRN has a morphological waveform that can use anywhere from 1Hz to the full 
     // available analog bandwidth (here assumed to be 80MHz), then min_bw would be 1 and 
     // max_bw would be 8e7 (units assumed to be in Hz).
-    double min_chan_bw_hz = 1;
-    double max_chan_bw_hz = 2;
+    int64 min_chan_bw_hz = 1;
+    int64 max_chan_bw_hz = 2;
     
     /// state whether the CIRN operates across multiple channels and how many
     // if single-channel, then min = max = 1.
@@ -351,8 +345,6 @@ message Framing
     // The sum of these durations should equal the current frame_duration (if requested).
     repeated int64 slot_durations_ps = 4;
 }
-
-
 
 //=================================================================================================
 // The following section contains the messages supporting informational exchanges 
