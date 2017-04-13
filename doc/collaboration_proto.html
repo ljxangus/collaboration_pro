@@ -176,6 +176,24 @@
           <a href="#collaboration.proto">collaboration.proto</a>
           <ul>
             <li>
+              <a href="#Acknowledgement">
+                <span class="badge">M</span>
+                Acknowledgement
+              </a>
+            </li>
+            <li>
+              <a href="#Capability">
+                <span class="badge">M</span>
+                Capability
+              </a>
+            </li>
+            <li>
+              <a href="#Channelization">
+                <span class="badge">M</span>
+                Channelization
+              </a>
+            </li>
+            <li>
               <a href="#Collaborate">
                 <span class="badge">M</span>
                 Collaborate
@@ -185,6 +203,12 @@
               <a href="#Demand">
                 <span class="badge">M</span>
                 Demand
+              </a>
+            </li>
+            <li>
+              <a href="#Framing">
+                <span class="badge">M</span>
+                Framing
               </a>
             </li>
             <li>
@@ -254,6 +278,18 @@
               </a>
             </li>
             <li>
+              <a href="#RequestDenied">
+                <span class="badge">M</span>
+                RequestDenied
+              </a>
+            </li>
+            <li>
+              <a href="#RequestYourCapabilityUse">
+                <span class="badge">M</span>
+                RequestYourCapabilityUse
+              </a>
+            </li>
+            <li>
               <a href="#RequestYourDemand">
                 <span class="badge">M</span>
                 RequestYourDemand
@@ -302,6 +338,12 @@
               </a>
             </li>
             <li>
+              <a href="#Capability.Type">
+                <span class="badge">E</span>
+                Capability.Type
+              </a>
+            </li>
+            <li>
               <a href="#Collaborate.CollaborationType">
                 <span class="badge">E</span>
                 Collaborate.CollaborationType
@@ -347,6 +389,107 @@
       <h2 id="collaboration.proto">collaboration.proto</h2><a href="#title">Top</a>
     </div>
     
+    <h3 id="Acknowledgement">Acknowledgement</h3>
+    <p>An Acknowledgement message to simply satisfy sender that its message has been recieved by the intended reciever</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ack_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>statement id that this ack is acknowledging</p></td>
+        </tr>
+        <tr>
+          <td>my_network_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>include the network ID of the network that generated this message</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Capability">Capability</h3>
+    <p>A Capability is something that describes how a CIR network is able to operate. This may be
+something like description of PHY layer configurability, or information on MAC type. It is 
+assumed to be used for describing the totality of a CIR capability, as opposed to what is 
+the exact current configuration of that capability (the requesting of which is handled under
+a different message type).</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>channelization</td>
+          <td><a href="#Channelization">Channelization</a></td>
+          <td>optional</td>
+          <td><p>See the PSD documentation</p></td>
+        </tr>
+        <tr>
+          <td>framing</td>
+          <td><a href="#Framing">Framing</a></td>
+          <td>optional</td>
+          <td><p>See the Spectrogram documentation</p></td>
+        </tr>
+        <tr>
+          <td>number_of_antennas</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>Number of antennas available to a node</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Channelization">Channelization</h3>
+    <p>the Channelization data type defines the flexibility of the RR's frequency usage within a CIRN</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>min_chan_bw_hz</td>
+          <td><a href="#int64">int64</a></td>
+          <td>optional</td>
+          <td><p>state the minimum and maximum bandwidth possible for a single channel
+if a CIRN has a morphological waveform that can use anywhere from 1Hz to the full 
+available analog bandwidth (here assumed to be 80MHz), then min_bw would be 1 and 
+max_bw would be 8e7 (units assumed to be in Hz).</p></td>
+        </tr>
+        <tr>
+          <td>max_chan_bw_hz</td>
+          <td><a href="#int64">int64</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>min_chans</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>state whether the CIRN operates across multiple channels and how many
+if single-channel, then min = max = 1.</p></td>
+        </tr>
+        <tr>
+          <td>max_chans</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>static_fcs</td>
+          <td><a href="#bool">bool</a></td>
+          <td>optional</td>
+          <td><p>boolean for whether the CIRN uses static frequency center(s).</p></td>
+        </tr>
+        <tr>
+          <td>is_contiguous</td>
+          <td><a href="#bool">bool</a></td>
+          <td>optional</td>
+          <td><p>boolean for whether or not channels will always be grouped together in a contiguous band</p></td>
+        </tr>
+      </tbody>
+    </table>
     <h3 id="Collaborate">Collaborate</h3>
     <p>The Collaborate message is a simple wrapper that allows users to determine the type of message
 they just received. Every message to be sent to another network must be encapsulated in a 
@@ -398,6 +541,18 @@ Collaborate message</p>
           <td>optional</td>
           <td><p>See RequestYourObservation documentation</p></td>
         </tr>
+        <tr>
+          <td>request_your_capability_use</td>
+          <td><a href="#RequestYourCapabilityUse">RequestYourCapabilityUse</a></td>
+          <td>optional</td>
+          <td><p>See RequestYourCapabilityUse documentation</p></td>
+        </tr>
+        <tr>
+          <td>request_denied</td>
+          <td><a href="#RequestDenied">RequestDenied</a></td>
+          <td>optional</td>
+          <td><p>See RequestDenied documentation</p></td>
+        </tr>
       </tbody>
     </table>
     <h3 id="Demand">Demand</h3>
@@ -441,6 +596,47 @@ in a network.</p>
           <td><a href="#double">double</a></td>
           <td>optional</td>
           <td><p>priority is initially arbitrarily defined between 0 and 1</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Framing">Framing</h3>
+    <p>the framing a CIRN uses provides information about its ability to control time usage</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>is_static</td>
+          <td><a href="#bool">bool</a></td>
+          <td>optional</td>
+          <td><p>boolean for whether the CIRN uses a statically defined frame structure</p></td>
+        </tr>
+        <tr>
+          <td>frame_duration_ps</td>
+          <td><a href="#int64">int64</a></td>
+          <td>optional</td>
+          <td><p>optional field for specifying the frame duration (in ps), unless the CIRN has a static
+frame time (as specified by is_static, above), it is expected this value would likely be
+not defined in any initial declarative form of the message, but would be present in response
+to request messages where the current frame_duration is requested.</p></td>
+        </tr>
+        <tr>
+          <td>frame_ref_toNTP_ps</td>
+          <td><a href="#int64">int64</a></td>
+          <td>optional</td>
+          <td><p>optional field for specifying the relative time offset of the start of the CIRNs frame
+from the NTP's second timehack</p></td>
+        </tr>
+        <tr>
+          <td>slot_durations_ps</td>
+          <td><a href="#int64">int64</a></td>
+          <td>repeated</td>
+          <td><p>optional field for specifying the finer grained timing structure of the CIRNs PHY/MAC.
+unless the frame is static (again as described above) for all time, it is expected this
+field would not be defined in any initial declaritive form of he message, but would be
+present in response to request messages where the current slot structure is requested.
+The sum of these durations should equal the current frame_duration (if requested).</p></td>
         </tr>
       </tbody>
     </table>
@@ -531,6 +727,18 @@ to an isotropic radiator (dBi)</p></td>
           <td><a href="#int32">int32</a></td>
           <td>repeated</td>
           <td><p>list of supported Observation types</p></td>
+        </tr>
+        <tr>
+          <td>supported_declaration_list</td>
+          <td><a href="#int32">int32</a></td>
+          <td>repeated</td>
+          <td><p>list of supported declaration messages</p></td>
+        </tr>
+        <tr>
+          <td>supported_capability_list</td>
+          <td><a href="#int32">int32</a></td>
+          <td>repeated</td>
+          <td><p>list of supported Capability types</p></td>
         </tr>
       </tbody>
     </table>
@@ -651,6 +859,12 @@ See the Demand data type documentation</p></td>
           <td><a href="#Observation">Observation</a></td>
           <td>repeated</td>
           <td><p>See the Observation data type documentation</p></td>
+        </tr>
+        <tr>
+          <td>capability</td>
+          <td><a href="#Capability">Capability</a></td>
+          <td>repeated</td>
+          <td><p>See the Capability data type documentation</p></td>
         </tr>
       </tbody>
     </table>
@@ -796,6 +1010,100 @@ to tie Performance metrics to flows between specific nodes in a network, if appr
 O means things can't get worse,
 1 means everything is great</p></td>
         </tr>
+        <tr>
+          <td>bit_error_rate</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+        <tr>
+          <td>frame_loss_rate</td>
+          <td><a href="#double">double</a></td>
+          <td>optional</td>
+          <td><p></p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="RequestDenied">RequestDenied</h3>
+    <p>Use this message to let another network know that you will not be fulfilling their request
+A future version of this message type might include reason types</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>denied_request_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>ID of the request being denied.</p></td>
+        </tr>
+        <tr>
+          <td>requesting_network_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>ID of the network which initiated the request</p></td>
+        </tr>
+        <tr>
+          <td>my_network_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>My Network ID.</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="RequestYourCapabilityUse">RequestYourCapabilityUse</h3>
+    <p>Use this message to request detailed about another networks current configuration
+within its capability set. Optionally, you can specify the location or node_id where
+you are interested in understanding the currently configured capability.</p>
+    <table class="field-table">
+      <thead>
+        <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>capability_types</td>
+          <td><a href="#int32">int32</a></td>
+          <td>repeated</td>
+          <td><p>which capability are you interested in?</p></td>
+        </tr>
+        <tr>
+          <td>start_time</td>
+          <td><a href="#TimeStamp">TimeStamp</a></td>
+          <td>optional</td>
+          <td><p>optional field: What time period are you interested in? Past, present, future?</p></td>
+        </tr>
+        <tr>
+          <td>duration_ps</td>
+          <td><a href="#int64">int64</a></td>
+          <td>optional</td>
+          <td><p>optional field: How much time are you interested in, ie what is the integration time?</p></td>
+        </tr>
+        <tr>
+          <td>my_network_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>if start_time and duration_ps are undefined, it means another CIRN is requesting a CIRN's overall capability, not the specific usage
+Who am I?</p></td>
+        </tr>
+        <tr>
+          <td>request_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>included to allow networks to politely deny requests, must be unique within a single network.</p></td>
+        </tr>
+        <tr>
+          <td>location</td>
+          <td><a href="#Location">Location</a></td>
+          <td>optional</td>
+          <td><p>optional field used to specify the location of the observation</p></td>
+        </tr>
+        <tr>
+          <td>node_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>optional field used to specify the node id of the observer</p></td>
+        </tr>
       </tbody>
     </table>
     <h3 id="RequestYourDemand">RequestYourDemand</h3>
@@ -831,6 +1139,12 @@ specify a source and/or destination node if you are interested in a specific flo
           <td><a href="#int32">int32</a></td>
           <td>optional</td>
           <td><p>Who am I?</p></td>
+        </tr>
+        <tr>
+          <td>request_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>included to allow networks to politely deny requests, must be unique within a single network.</p></td>
         </tr>
         <tr>
           <td>source_node</td>
@@ -881,6 +1195,12 @@ also specify either the location or node_id for where you wish this observation 
           <td><p>Who am I?</p></td>
         </tr>
         <tr>
+          <td>request_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>included to allow networks to politely deny requests, must be unique within a single network.</p></td>
+        </tr>
+        <tr>
           <td>location</td>
           <td><a href="#Location">Location</a></td>
           <td>optional</td>
@@ -929,6 +1249,12 @@ specify a source and/or destination node if you are interested in a specific flo
           <td><p>Who am I?</p></td>
         </tr>
         <tr>
+          <td>request_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>included to allow networks to politely deny requests, must be unique within a single network.</p></td>
+        </tr>
+        <tr>
           <td>source_node</td>
           <td><a href="#int32">int32</a></td>
           <td>optional</td>
@@ -974,6 +1300,12 @@ along with the starting time and duration of your time period of interest.</p>
           <td><a href="#int32">int32</a></td>
           <td>optional</td>
           <td><p>Who am I?</p></td>
+        </tr>
+        <tr>
+          <td>request_id</td>
+          <td><a href="#int32">int32</a></td>
+          <td>optional</td>
+          <td><p>included to allow networks to politely deny requests, must be unique within a single network.</p></td>
         </tr>
       </tbody>
     </table>
@@ -1096,6 +1428,36 @@ This assumes most people will talk about time in terms of real world time from N
         </tr>
       </tbody>
     </table>
+    <h3 id="Capability.Type">Capability.Type</h3>
+    <p>each subclass of Capability must be added to this enum as a convienient
+way to reference supported objects in the Hello message between networks</p>
+    <table class="enum-table">
+      <thead>
+        <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>UNKNOWN</td>
+          <td>0</td>
+          <td><p>new types will show up as UNKNOWN</p></td>
+        </tr>
+        <tr>
+          <td>CHANNELIZATION</td>
+          <td>100</td>
+          <td><p>Channelization type ID</p></td>
+        </tr>
+        <tr>
+          <td>FRAMING</td>
+          <td>101</td>
+          <td><p>Time framing type ID</p></td>
+        </tr>
+        <tr>
+          <td>NUMBER_OF_ANTENNAS</td>
+          <td>102</td>
+          <td><p>NumberOfAntennas type ID</p></td>
+        </tr>
+      </tbody>
+    </table>
     <h3 id="Collaborate.CollaborationType">Collaborate.CollaborationType</h3>
     <p>The CollaborationType enum lists all the valid top level messages in the Collaboration
 Protocol</p>
@@ -1143,6 +1505,21 @@ Protocol</p>
           <td>REQUEST_YOUR_OBSERVATION</td>
           <td>106</td>
           <td><p>RequestYourObservation message ID</p></td>
+        </tr>
+        <tr>
+          <td>ACKNOWLEDGEMENT</td>
+          <td>107</td>
+          <td><p>Acknowledgement message ID</p></td>
+        </tr>
+        <tr>
+          <td>REQUEST_YOUR_CAPABILITY_USE</td>
+          <td>108</td>
+          <td><p>RequestYourCapabilityUse message ID</p></td>
+        </tr>
+        <tr>
+          <td>REQUEST_DENIED</td>
+          <td>109</td>
+          <td><p>RequestDenied message ID</p></td>
         </tr>
       </tbody>
     </table>
@@ -1208,6 +1585,11 @@ way to reference supported objects in the Hello message between networks</p>
           <td>103</td>
           <td><p>top level Observation type ID</p></td>
         </tr>
+        <tr>
+          <td>CAPABILITY</td>
+          <td>104</td>
+          <td><p>top level Capability type ID</p></td>
+        </tr>
       </tbody>
     </table>
     <h3 id="Observation.Type">Observation.Type</h3>
@@ -1256,6 +1638,16 @@ way to reference supported objects in the Hello message between networks</p>
           <td>SCALAR_PERFORMANCE</td>
           <td>100</td>
           <td><p>ScalarPerformance type ID</p></td>
+        </tr>
+        <tr>
+          <td>BIT_ERROR_RATE</td>
+          <td>101</td>
+          <td><p>BitErrorRate type ID</p></td>
+        </tr>
+        <tr>
+          <td>FRAME_LOSS_RATE</td>
+          <td>102</td>
+          <td><p>PacketLossRate type ID</p></td>
         </tr>
       </tbody>
     </table>
