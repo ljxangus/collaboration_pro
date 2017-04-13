@@ -125,6 +125,8 @@ message Performance
     {
         UNKNOWN = 0; /// new types will show up as UNKNOWN
         SCALAR_PERFORMANCE = 100; /// ScalarPerformance type ID
+        BIT_ERROR_RATE = 101; /// BitErrorRate type ID
+        FRAME_LOSS_RATE = 102; /// PacketLossRate type ID
     }
 
     // --------------------------------------------------------------------------------------------
@@ -143,7 +145,9 @@ message Performance
         /// scalar_performance is defined as a real number from 0 to 1. 
         // O means things can't get worse,
         // 1 means everything is great
-        double scalar_performance = 100; 
+        double scalar_performance = 100;
+        double bit_error_rate = 101;
+        double frame_loss_rate = 102;
     }
 }
 
@@ -287,7 +291,7 @@ message Capability // abstract top level class
         UNKNOWN = 0; /// new types will show up as UNKNOWN
         CHANNELIZATION = 100; /// Channelization type ID
         FRAMING = 101; /// Time framing type ID
-        NUMBER_OF_ANTENNAS = 102 /// NumberOfAntennas type ID
+        NUMBER_OF_ANTENNAS = 102; /// NumberOfAntennas type ID
     }
 
     /// only one of these fields can be filled out per individual Capability message
@@ -295,7 +299,7 @@ message Capability // abstract top level class
     {
         Channelization channelization = 100; /// See the PSD documentation
         Framing framing = 101; /// See the Spectrogram documentation
-        int32 number_of_antennas = 102 /// Number of antennas available to a node  
+        int32 number_of_antennas = 102; /// Number of antennas available to a node  
     }   
 }
 
@@ -517,7 +521,7 @@ message RequestYourObservation
 /// Use this message to request detailed about another networks current configuration
 // within its capability set. Optionally, you can specify the location or node_id where
 // you are interested in understanding the currently configured capability.
-message RequesetYourCapabilityUse
+message RequestYourCapabilityUse
 {
     repeated int32 capability_types = 1; /// which capability are you interested in?
     TimeStamp start_time = 2; /// optional field: What time period are you interested in? Past, present, future?
