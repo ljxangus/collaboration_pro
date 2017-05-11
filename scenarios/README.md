@@ -82,25 +82,45 @@ Conversational subprotocol, described later, will enable that capability. See be
 the scenarios focused on the Informational subprotocol.
 
 ### Informational Scenarios
-1. [Simple Informational](scenario_1/simple_informational.md)
+1. [Simple Informational](simple_informational/simple_informational.md)
 
     This scenario shows one of the simplest possible collaborative exchanges between two 
     intelligent radio networks. In this scenario, the two radio networks use simple performance 
     feedback to solve the hidden node problem.
 
-2. [Using Observations](scenario_2/using_observations.md)
+2. [Using Observations](using_observations/using_observations.md)
 
     This scenario is an example of how intelligent radio networks can express intent and leverage 
     the observations of others to reduce the time required to converge to a satisfactory soltuion. 
     This scenario illustrates how networks may share observations to do simple optimizations in 
     power and frequency use.
 
-3. [Reactive to Priority](scenario_3/using_priority.md)
+3. [Introduction to Capabilities](capability_intro/capability_intro.md)
 
-    **Coming Soon** Agreeing to split up available spectrum is (relatively) easy when there is
-    enough to go around. What happens when there is too much traffic to handle with the available
-    spectrum? This scenario illustrates a simple example of how two networks might decide how to 
-    allocate spectrum to service traffic according to priority.
+    This scenario explains the concept of capabilities. 
+
+4. [Using ACK Messages](using_ack_messages/read_me.md) 
+
+    This scenario is an example of how to use ACK messages to make the Collaboration Channel more
+    efficient under unreliable channel conditions.
+
+5. [Introduction to Modulation Types](modulation_type/modulation_scheme.md)
+
+    This scenario motivates the use of Modulation types in the Collaboration Protocol.
+
+6. [Introduction to Spectrum Usage Preferences](spectrum_preferences/spectrum_usage_preference.md)
+
+    This scenario explains how to use Network Level Spectrum Usage preferences to allow an
+    ensemble of CIRNs to use the spectrum more efficiently.
+
+7. [Using Beacons](using_beacons/beacon.md)
+
+    This scenario shows how to use beacon or Node Level Resource Usage messages to allow CIRNs to
+    share the spectrum more efficiently
+
+8. **To Be Added By Competitors** Reactive to Priority
+
+
 
 
 ----------------------------------------------------------------------------------------------------
@@ -111,4 +131,4 @@ This subprotocol is intended to support the ability for networks to make proposa
 reject them or make counter proposals, and seek agreement or consensus rather than taking action
 unilaterally and hoping for the best.
 
-**Coming soon** 
+**To Be Added By Competitors** 
